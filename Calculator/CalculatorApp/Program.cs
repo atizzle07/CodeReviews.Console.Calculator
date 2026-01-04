@@ -9,7 +9,8 @@ namespace CalculatorProgram
         static void Main(string[] args)
         {
             bool endApp = false;
-            int calculatorUsed = 0;
+            List<Calculation> calcHistory = new();
+
             // Display title as the C# console calculator app.
             Console.WriteLine("Console Calculator in C#\r");
             Console.WriteLine("------------------------\n");
@@ -24,8 +25,14 @@ namespace CalculatorProgram
                 double result = 0;
 
                 // Ask the user to type the first number.
-                Console.Write("Type a number, and then press Enter: ");
+                Console.Write("Type a number, and then press Enter (or press [ x ] to use last calculation result): ");
                 numInput1 = Console.ReadLine();
+
+                if (numInput1 == "x")
+                {
+                    numInput1 = calcHistory[calcHistory.Count-1].Result.ToString();
+                    Console.WriteLine($"Your first number is {numInput1}");
+                }
 
                 double cleanNum1 = 0;
                 while (!double.TryParse(numInput1, out cleanNum1))
@@ -35,8 +42,14 @@ namespace CalculatorProgram
                 }
 
                 // Ask the user to type the second number.
-                Console.Write("Type another number, and then press Enter: ");
+                Console.Write("Type another number, and then press Enter (or press [ x ] to use last calculation result): ");
                 numInput2 = Console.ReadLine();
+
+                if (numInput2 == "x")
+                {
+                    numInput2 = calcHistory[calcHistory.Count-1].Result.ToString();
+                    Console.WriteLine($"Your first number is {numInput1}");
+                }
 
                 double cleanNum2 = 0;
                 while (!double.TryParse(numInput2, out cleanNum2))
@@ -69,7 +82,18 @@ namespace CalculatorProgram
                         {
                             Console.WriteLine("This operation will result in a mathematical error.\n");
                         }
-                        else Console.WriteLine("Your result: {0:0.##}\n", result);
+                        else 
+                        {
+                            calcHistory.Add(new Calculation() {
+                                FirstNum = cleanNum1,
+                                SecondNum = cleanNum2,
+                                Result = result
+                            });
+
+
+                            Console.WriteLine("Your result: {0:0.##}\n", result);
+                            Console.WriteLine($"You have used the calculator {calcHistory.Count} times");
+                        }
                     }
                     catch (Exception e)
                     {
@@ -79,7 +103,7 @@ namespace CalculatorProgram
 
                 }
                 Console.WriteLine("------------------------\n");
-                calculatorUsed += 1
+                
                 // Wait for the user to respond before closing.
                 Console.Write("Press 'n' and Enter to close the app, or press any other key and Enter to continue: ");
                 if (Console.ReadLine() == "n") endApp = true;
